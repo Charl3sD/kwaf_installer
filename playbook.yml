@@ -1,0 +1,14 @@
+## Connexion with root+pass:  ansible-playbook -i,<IP>  playbook.yml -u root -k  
+### Connexion with root+ssh_key:  ansible-playbook -i,<IP> playbook.yml -u root
+### Only run specific tasks with tags: ansible-playbook -i,<IP>  playbook.yml -u root --tags "<tag>"
+---
+- hosts: all
+  tasks: 
+     - include: tasks/install_pkgs.yml
+       tags: [packages]
+     - include: tasks/epel.yml
+       tags: [packages]
+     - include: tasks/ssh_keys.yml
+     - include: tasks/disable_selinux_firewall.yml
+       tags: [selinux]
+     - include: tasks/services.yml    

@@ -1,0 +1,8 @@
+- name: Add repository epel
+  yum_repository:
+    name: epel
+    description: EPEL YUM repo
+    baseurl: http://download.fedoraproject.org/pub/epel/$releasever/$basearch/
+    gpgcheck: no
+    sslverify: no
+

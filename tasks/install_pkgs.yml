@@ -1,0 +1,43 @@
+---
+- name: First update ssl - issue if old centos version
+  yum: name={{ packages }} state=latest
+  vars:
+    packages:
+      - ca-certificates 
+      - openssl 
+      - nss
+
+- name: Run update-ca-trust 
+  command: /usr/bin/update-ca-trust
+
+- name: Ensure base packages are installed
+  yum: name={{ packages }} state=installed
+  vars:
+    packages:
+    - libselinux-python
+    - vim-enhanced
+    - rsync
+    - man
+    - wget
+    - bzip2
+    - screen
+    - lsof
+    - tzdata
+    - rsyslog
+    - file
+    - xz
+    - psmisc
+    - net-tools
+    - oddjob-mkhomedir
+    - git
+
+- name: Copy conf files
+  copy:
+    src: "{{ item.src }}"
+    dest: "{{ item.dest }}"
+    owner: root
+    group: root
+    mode: 0644
+  with_items:
+     - src: "files/sshd_config"
+       dest: "/etc/ssh/sshd_config"
