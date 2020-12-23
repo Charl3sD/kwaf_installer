@@ -1,0 +1,15 @@
+---
+- name: Use pip to install Kubespray requirements
+  command: "pip3 install -r {{ playbook_dir }}/../kubespray/requirements.txt"
+
+- name: Include vars from k8s.yaml
+  include_vars:
+    file: k8s.yaml
+
+- template:
+    src: "{{ playbook_dir }}/files/kubespray_inventory_single.ini.j2"
+    dest: /root/test.conf
+    owner: root
+    group: wheel
+    mode: 0644
+

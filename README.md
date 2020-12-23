@@ -5,6 +5,6 @@ this playbook is meant to:
 - add protection with Radware Kwaf
 
 installation:
-run the prequisites.sh script to install EPEL and Ansible
-run the playbook
+set variables in kwaf/vars/k8s.yaml acording to your needs
+run the bootstrap.sh
 enjoy !

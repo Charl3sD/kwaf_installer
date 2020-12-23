@@ -1,0 +1,21 @@
+# ## Configure 'ip' variable to bind kubernetes services on a
+# ## different ip than the default iface
+# ## We should set etcd_member_name for etcd cluster. The node that is not a etcd member do not need to set the value, or can set the empty string value.
+[all]
+node1 ansible_host={{NodeIP1}} etcd_member_name=etcd1
+
+[kube-master]
+node1
+
+[etcd]
+node1
+
+[kube-node]
+node1
+
+[calico-rr]
+
+[k8s-cluster:children]
+kube-master
+kube-node
+calico-rr

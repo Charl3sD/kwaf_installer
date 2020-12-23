@@ -1,0 +1,10 @@
+---
+#this defines the type of deployment. accepted values are 1 OR 3
+#A single node deployment will host all services
+#A 3 node cluster will have node 1 as master and node 1-3 as workers
+ClusterSize: 1
+
+# this defines the IPs where the cluster should be deployed. Only NodeIP1 will be used if cluster size is 1
+NodeIP1: 1.2.3.4
+NodeIP2: 1.2.3.4
+NodeIP3: 1.2.3.4

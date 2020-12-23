@@ -11,4 +11,6 @@
      - include: tasks/ssh_keys.yml
      - include: tasks/disable_selinux_firewall.yml
        tags: [selinux]
-     - include: tasks/services.yml    
+     - include: tasks/services.yml   
+     - include: tasks/k8s_base.yml 
+       tags: [k8s_install]

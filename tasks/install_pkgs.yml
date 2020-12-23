@@ -30,6 +30,10 @@
     - net-tools
     - oddjob-mkhomedir
     - git
+    - python3
+
+- name: Use pip to install virtualenv
+  command: /usr/bin/pip3 install -U virtualenv
 
 - name: Copy conf files
   copy:
