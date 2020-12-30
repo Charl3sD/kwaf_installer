@@ -1,3 +1,35 @@
 ---
 
+- name: Creates persistent volume dir.
+  file:
+    path: "/mnt/disks/vol1"
+    state: directory
 
+- name: Create a persistent volume for Docker registry
+  community.kubernetes.k8s:
+    state: present
+    definition:
+      apiVersion: v1
+      kind: PersistentVolume
+      metadata:
+        name: registry-pv
+      spec:
+        capacity:
+          storage: 10Gi
+        accessModes:
+        - ReadWriteOnce
+        persistentVolumeReclaimPolicy: Retain
+        storageClassName: local-storage
+        local:
+          path: /mnt/disks/vol1
+        nodeAffinity:
+          required:
+            nodeSelectorTerms:
+            - matchExpressions:
+              - key: kubernetes.io/hostname
+                operator: In
+                values:
+                - node1
+                - node2
+                - node3
+      

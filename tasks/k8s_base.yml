@@ -2,6 +2,9 @@
 - name: Use pip to install Kubespray requirements
   command: "pip3 install -r {{ playbook_dir }}/../kubespray/requirements.txt"
 
+- name: Use pip to install ansible module community.kubernetes.k8s python dependency 🐍
+  command: "pip3 install openshift"
+
 - name: Include vars from k8s.yaml
   include_vars:
     file: k8s.yaml
