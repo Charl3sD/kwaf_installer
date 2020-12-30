@@ -1,6 +1,6 @@
-## Connexion with root+pass:  ansible-playbook -i,<IP>  playbook.yml -u root -k  
-### Connexion with root+ssh_key:  ansible-playbook -i,<IP> playbook.yml -u root
-### Only run specific tasks with tags: ansible-playbook -i,<IP>  playbook.yml -u root --tags "<tag>"
+## Connexion with root+pass:  ansible-playbook -i,<IP>  prequisites.yml -u root -k  
+### Connexion with root+ssh_key:  ansible-playbook -i,<IP> prequisites.yml -u root
+### Only run specific tasks with tags: ansible-playbook -i,<IP> prequisites.yml -u root --tags "<tag>"
 ---
 - hosts: all
   tasks: 
@@ -14,3 +14,4 @@
      - include: tasks/services.yml   
      - include: tasks/k8s_base.yml 
        tags: [k8s_install]
+
