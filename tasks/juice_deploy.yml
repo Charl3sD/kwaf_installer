@@ -1,0 +1,128 @@
+---
+- name: remove old containers if present
+  command: docker rm --force base-juice-shop
+  ignore_errors: yes
+
+- name: Pull juice-shop base image
+  community.general.docker_image:
+    name: bkimminich/juice-shop
+    source: pull
+
+- name: Run Juice-shop in docker to patch it
+  command: docker run -d --name base-juice-shop bkimminich/juice-shop
+
+- name: Juice-shop patch helmet MIME manipulation
+  command: docker exec -it --user root base-juice-shop sed -i 's/.*helmet\.noSniff.*//' server.js
+
+- name: Juice-shop patch helmet framequard
+  command: docker exec -it --user root base-juice-shop sed -i 's/.*helmet\.frameguard.*//' server.js
+
+- name: Commit changes to moded-juice-shop docker image
+  command: docker commit base-juice-shop moded-juice-shop
+
+- name: Tag and push to local registry
+  community.general.docker_image:
+    name: moded-juice-shop
+    repository: localhost:5000/moded-juice-shop
+    push: yes
+    source: local
+
+#insert app deployment here
+- name: Create a Service object from an inline definition
+  community.kubernetes.k8s:
+    state: present
+    definition:
+      apiVersion: apps/v1
+      kind: Deployment
+      metadata:
+        annotations:
+          deployment.kubernetes.io/revision: "1"
+        generation: 1
+        labels:
+          app.kubernetes.io/instance: my-juice-shop
+          app.kubernetes.io/name: juice-shop
+          app.kubernetes.io/version: v12.0.2
+        name: my-juice-shop
+        namespace: default
+        selfLink: /apis/apps/v1/namespaces/default/deployments/my-juice-shop
+#        uid: 297c111d-cdd9-4955-85bc-e17e4e29dbea
+      spec:
+        progressDeadlineSeconds: 600
+        replicas: 1
+        revisionHistoryLimit: 10
+        selector:
+          matchLabels:
+            app.kubernetes.io/instance: my-juice-shop
+            app.kubernetes.io/name: juice-shop
+        strategy:
+          rollingUpdate:
+            maxSurge: 25%
+            maxUnavailable: 25%
+          type: RollingUpdate
+        template:
+          metadata:
+            creationTimestamp: null
+            labels:
+              app.kubernetes.io/instance: my-juice-shop
+              app.kubernetes.io/name: juice-shop
+          spec:
+            containers:
+            - image: localhost:5000/moded-juice-shop:latest
+              imagePullPolicy: IfNotPresent
+              livenessProbe:
+                failureThreshold: 3
+                httpGet:
+                  path: /
+                  port: http
+                  scheme: HTTP
+                periodSeconds: 10
+                successThreshold: 1
+                timeoutSeconds: 1
+              name: juice-shop
+              ports:
+              - containerPort: 3000
+                name: http
+                protocol: TCP
+              readinessProbe:
+                failureThreshold: 3
+                httpGet:
+                  path: /
+                  port: http
+                  scheme: HTTP
+                periodSeconds: 10
+                successThreshold: 1
+                timeoutSeconds: 1
+              resources: {}
+              securityContext: {}
+              terminationMessagePath: /dev/termination-log
+              terminationMessagePolicy: File
+            dnsPolicy: ClusterFirst
+            restartPolicy: Always
+            schedulerName: default-scheduler
+            securityContext: {}
+            terminationGracePeriodSeconds: 30
+
+
+- name: Create a juicy ingress endpoint
+  community.kubernetes.k8s:
+    state: present
+    definition:
+      apiVersion: networking.k8s.io/v1
+      kind: Ingress
+      metadata:
+        name: juice-box-ing
+        namespace: default
+        annotations:
+          nginx.ingress.kubernetes.io/app-root: /juice-insecure/
+          nginx.ingress.kubernetes.io/rewrite-target: /
+      spec:
+        rules:
+        - http:
+            paths:
+            - path: /
+              pathType: Prefix
+              backend:
+                service:
+                  name: my-juice-shop
+                  port:
+                    number: 3000

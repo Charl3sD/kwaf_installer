@@ -35,7 +35,7 @@ yum -y install epel-release
 yum repolist
 yum -y install ansible git vim
 
-ansible-galaxy collection install community.kubernetes
+ansible-galaxy collection install community.kubernetes community.general
 
 git clone https://github.com/kubernetes-sigs/kubespray $workingdir/../kubespray
 
@@ -69,7 +69,11 @@ do
     esac
 done
 
+echo "Getting OWASP Juice-Shop"
+git clone https://github.com/bkimminich/juice-shop.git $workingdir/../juice-shop
+
 echo "Begining Application deployment "
 read -p "You will be prompted for the local SSH password. continue ?"
 ansible-playbook -i,127.0.0.1  $workingdir/deployment.yml -u root -k
 
+alias k="kubectl"

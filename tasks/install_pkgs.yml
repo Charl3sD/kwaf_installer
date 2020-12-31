@@ -14,7 +14,9 @@
   yum: name={{ packages }} state=installed
   vars:
     packages:
+    - python3
     - libselinux-python
+    - libselinux-python3
     - vim-enhanced
     - rsync
     - man
@@ -30,10 +32,12 @@
     - net-tools
     - oddjob-mkhomedir
     - git
-    - python3
 
 - name: Use pip to install virtualenv
   command: /usr/bin/pip3 install -U virtualenv
+
+- name: Use pip to install docker python SDK
+  command: /usr/bin/pip3 install -U docker
 
 - name: Copy conf files
   copy:
