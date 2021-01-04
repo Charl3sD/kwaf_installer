@@ -9,4 +9,6 @@
        - include: tasks/k8s_deploy.yml
          tags: [storage]
        - include: tasks/juice_deploy.yml
-         tags: [docker_image]
+         tags: [Juice]
+       - include: tasks/kwaf_deploy.yml
+         tags: [kwaf]

@@ -27,7 +27,10 @@
     push: yes
     source: local
 
-#insert app deployment here
+- name: remove unneeded container
+  command: docker rm --force base-juice-shop
+  ignore_errors: yes
+
 - name: Create a Service object from an inline definition
   community.kubernetes.k8s:
     state: present
@@ -45,7 +48,6 @@
         name: my-juice-shop
         namespace: default
         selfLink: /apis/apps/v1/namespaces/default/deployments/my-juice-shop
-#        uid: 297c111d-cdd9-4955-85bc-e17e4e29dbea
       spec:
         progressDeadlineSeconds: 600
         replicas: 1
@@ -102,6 +104,32 @@
             securityContext: {}
             terminationGracePeriodSeconds: 30
 
+- name: Create a juicy service
+  community.kubernetes.k8s:
+    state: present
+    definition:
+      apiVersion: v1
+      kind: Service
+      metadata:
+        labels:
+          app.kubernetes.io/instance: my-juice-shop
+          app.kubernetes.io/name: juice-shop
+          app.kubernetes.io/version: v12.0.2
+        name: my-juice-shop-svc
+        namespace: default
+        selfLink: /api/v1/namespaces/default/services/my-juice-shop
+      spec:
+        clusterIP: 10.233.33.187
+        ports:
+        - name: http
+          port: 3000
+          protocol: TCP
+          targetPort: http
+        selector:
+          app.kubernetes.io/instance: my-juice-shop
+          app.kubernetes.io/name: juice-shop
+        sessionAffinity: None
+        type: ClusterIP
 
 - name: Create a juicy ingress endpoint
   community.kubernetes.k8s:
@@ -123,6 +151,6 @@
               pathType: Prefix
               backend:
                 service:
-                  name: my-juice-shop
+                  name: my-juice-shop-svc
                   port:
                     number: 3000

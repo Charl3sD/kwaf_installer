@@ -1,0 +1,45 @@
+---
+#refer to the installer waas/values.yaml file for aditional info on these values
+global:
+  image:
+    registry: localhost:5000
+    version: :1.4.0
+    pullPolicy: IfNotPresent
+  useNodePort: false
+  nodePortRangeStart: 31000
+  namesPrefix: waas-
+  useLoadBalancer: false
+  elasticsearchUser: elastic
+  elasticsearchPassword: espass
+  kibanaSystemUser: kibana_system
+  kibanaSystemPassword: kibanapass
+  elasticStorageManagement:
+    enabled: true
+    policy: poc
+    pollInterval:
+    maxSize:
+    delete:
+  guiUser: admin
+  guiPassword: admin
+  guiAdminEmail:
+  systemMode: inline
+  labels:
+    app.kubernetes.io/name: WAAS
+    app.kubernetes.io/instance: WAAS
+  preserveJobs: false
+  installResources: true
+  logs:
+    basePath: /var/log
+    filebeatData: /var/lib/filebeat-data
+  openshift:
+    enabled: false
+  gatherK8sPerformanceMetrics: false
+  prometheusPort: 9090
+  redis:
+    security:
+      enabled: true
+      pass: waasredispass
+    configuration: standalone
+waas-prometheus:
+  persistentVolume:
+    enabled: false

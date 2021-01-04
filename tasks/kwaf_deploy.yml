@@ -1,0 +1,49 @@
+---
+- name: Include vars from k8s.yaml
+  include_vars:
+    file: k8s.yaml
+
+- name: Creates KwafInst directory to extract installer 
+  file:
+    path: "{{ playbook_dir }}/../KwafInst"
+    state: directory
+
+#- name: Extract Kwaf installer ... you have time to grab coffee ☕
+#  unarchive:
+#    src: "{{ playbook_dir }}/../{{InstallerTgz}}"
+#    dest: "{{ playbook_dir }}/../KwafInst"
+#    remote_src: True
+
+
+- name: Find archives at root level
+  find: paths="{{ playbook_dir }}/../KwafInst/" patterns="*.tgz"
+  register: root_result
+
+- name: Extract root level Kwaf sub-archives
+  unarchive: 
+    src: "{{ item.path }}" 
+    dest: "{{ playbook_dir }}/../KwafInst"
+    remote_src: True
+  with_items: "{{ root_result.files }}"
+
+# the instructions are not very clear but we probably dont need to untar these images
+#
+#- name: Find archives in waas_images folder
+#  find: paths="{{ playbook_dir }}/../KwafInst/waas_images" patterns="*.tar"
+#  register: waas_result
+#
+#- name: Extract root level Kwaf sub-archives
+#  unarchive:
+#    src: "{{ item.path }}"
+#    dest: "{{ playbook_dir }}/../KwafInst/waas_images"
+#    remote_src: True
+#  with_items: "{{ waas_result.files }}"
+
+- name: Create a kwaf namespace
+  community.kubernetes.k8s:
+    name: kwaf
+    api_version: v1
+    kind: Namespace
+    state: present
+
+

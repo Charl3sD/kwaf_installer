@@ -1,4 +1,12 @@
 #!/bin/bash
+
+if [ "$EUID" -ne 0 ]
+  then echo "Please run as root"
+  exit
+fi
+
+clear
+
 workingdir="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
 cat <<- EOF
 ==================================================================================
@@ -11,26 +19,30 @@ cat <<- EOF
                             /_/|_| |__/|__/_/ |_/_/    
 
 ==================================================================================
-                                  ! WARNING !
+                               ! WARNING ACHTUNG !
 
 This script will modify significantly this machine's configuration. 
-Run on dedicated CentOS 7 machines !
+Run on (a) dedicated CentOS 7 machine(s) !
 
 ==================================================================================
                              🎁 What's in the box 🎁
 
-- A Kubernetes cluster ⎈ (1 or 3 nodes)
+- a declarative and idempotent installer
+- a Kubernetes 1.19 cluster ⎈ (1 or 3 nodes)
+- helm 3 (no need for tiller)
 - A private docker registry 🐳
 - JuiceBox (a sample insecure application)
 - Radware Kwaf
 
+==================================================================================
+Writen and maintained by Charles Durocher : charles.durocher@radware.com
 ==================================================================================
 
 EOF
 
 read -p "continue ? Ctrl+c to abort"
 
-echo "Setting up installer requirements"
+echo "Wunderbar ! ... Setting up installer requirements"
 yum -y install epel-release
 yum repolist
 yum -y install ansible git vim
