@@ -16,9 +16,9 @@ global:
   elasticStorageManagement:
     enabled: true
     policy: poc
-    pollInterval:
-    maxSize:
-    delete:
+#    pollInterval:
+#    maxSize:
+#    delete:
   guiUser: admin
   guiPassword: admin
   guiAdminEmail:

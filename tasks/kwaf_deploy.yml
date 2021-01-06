@@ -14,7 +14,6 @@
 #    dest: "{{ playbook_dir }}/../KwafInst"
 #    remote_src: True
 
-
 - name: Find archives at root level
   find: paths="{{ playbook_dir }}/../KwafInst/" patterns="*.tgz"
   register: root_result
@@ -26,24 +25,77 @@
     remote_src: True
   with_items: "{{ root_result.files }}"
 
-# the instructions are not very clear but we probably dont need to untar these images
-#
-#- name: Find archives in waas_images folder
-#  find: paths="{{ playbook_dir }}/../KwafInst/waas_images" patterns="*.tar"
-#  register: waas_result
-#
-#- name: Extract root level Kwaf sub-archives
-#  unarchive:
-#    src: "{{ item.path }}"
-#    dest: "{{ playbook_dir }}/../KwafInst/waas_images"
-#    remote_src: True
-#  with_items: "{{ waas_result.files }}"
-
-- name: Create a kwaf namespace
+- name: Create a namespace for kwaf (waas)
   community.kubernetes.k8s:
-    name: kwaf
+    name: waas
     api_version: v1
     kind: Namespace
     state: present
 
+- name: >-
+    Install Radware v1 custom ressource definitions
+    If the definition file has been encrypted with Ansible Vault it will automatically be decrypted.
+  community.kubernetes.k8s:
+    state: present
+    definition: "{{ lookup('file', '{{item}}') | from_yaml }}"
+  with_fileglob:
+    - "{{ playbook_dir }}/../KwafInst/waas/custom-resources/v1/*.yaml"
 
+- name: >-
+    Install Radware v1beta1 custom ressource definitions
+    If the definition file has been encrypted with Ansible Vault it will automatically be decrypted.
+  community.kubernetes.k8s:
+    state: present
+    definition: "{{ lookup('file', '{{item}}') | from_yaml }}"
+  with_fileglob:
+    - "{{ playbook_dir }}/../KwafInst/waas/custom-resources/v1beta1/*.yaml"
+
+- name: Log into private registry and force re-authorization
+  community.general.docker_login:
+    registry_url: localhost:5000
+    username: potato
+    password: tomato
+    reauthorize: yes
+
+- name: push and tag Docker images to registry 
+  docker_image:
+    name: '{{ item | regex_replace("(-[^-]+$)", "") | regex_replace("(^(.*)/)", "")}}:{{WaasVersion}}'
+    repository: 'localhost:5000/{{ item | regex_replace("(-[^-]+$)", "") | regex_replace("(^(.*)/)", "")}}:{{WaasVersion}}'
+    push: yes
+    load_path: "{{item}}"
+  with_fileglob:
+    - "{{ playbook_dir }}/../KwafInst/waas_images/*.tar"
+
+- name: Deploy Kwaf
+  community.kubernetes.helm:
+    name: waas
+    chart_ref: "{{ item }}"
+    release_namespace: waas
+    chart_version: 1.4.0
+    values_files:
+      - "{{ playbook_dir }}/files/waas_values.yaml"
+  with_fileglob:
+    - "{{ playbook_dir }}/../KwafInst/waas_helm*.tgz"
+
+- name: Create an ingress endpoint for Kwaf
+  community.kubernetes.k8s:
+    state: present
+    definition:
+      apiVersion: networking.k8s.io/v1
+      kind: Ingress
+      metadata:
+        name: kwaf-gui-ing
+        namespace: waas
+        annotations:
+          nginx.ingress.kubernetes.io/backend-protocol: "HTTPS"
+      spec:
+        rules:
+        - http:
+            paths:
+            - path: /
+              pathType: Prefix
+              backend:
+                service:
+                  name: waas-gui-service
+                  port:
+                    number: 8080

@@ -1,0 +1,200 @@
+---
+- name: Create a policy to secure our Application (full)
+  community.kubernetes.k8s:
+    state: present
+    definition:
+      apiVersion: waas.radware.com/v1beta1
+      kind: Profile
+      metadata:
+        annotations:
+        name: kwaf-full-protection-profile
+        namespace: default
+      spec:
+        policies:
+        - classifiers:
+          - hostname: '*'
+            id: example_app_classifier
+            path:
+              operand: Prefix
+              value: /
+            protectionId: full_protection
+          name: FullProtectionPolicy
+          operatorEmail: support@example.com
+          protections:
+          - expressions:
+              opMode: Passive
+            id: full_protection
+            activityTracking:
+              blockPeriod: 5m
+              countStatic: false
+              excludes: []
+              ignoreStaticWithParams: false
+              opMode: Bypass
+              rate: 5s
+            rfcValidation:
+              action: Block
+              report: Always
+            dlp:
+              opMode: Active
+              patterns:
+              - excludes: []
+                predefined: CCN
+            signatures:
+              opMode: Passive
+            whitelist:
+              excludes:
+              - isRegex: true
+                methods:
+                - GET
+                - POST
+                pattern: /.*
+              opMode: Passive
+     
+- name: Create a deployment for a securised instance of juicebox
+  community.kubernetes.k8s:
+    state: present
+    definition:
+      apiVersion: apps/v1
+      kind: Deployment
+      metadata:
+        annotations:
+          deployment.kubernetes.io/revision: "1"
+        generation: 1
+        labels:
+          app.kubernetes.io/instance: my-secure-juice-shop
+          app.kubernetes.io/name: juice-shop
+          app.kubernetes.io/version: v12.0.2
+        name: my-secure-juice-shop
+        namespace: default
+      spec:
+        progressDeadlineSeconds: 600
+        replicas: 1
+        revisionHistoryLimit: 10
+        selector:
+          matchLabels:
+            app.kubernetes.io/instance: my-secure-juice-shop
+            app.kubernetes.io/name: juice-shop
+        strategy:
+          rollingUpdate:
+            maxSurge: 25%
+            maxUnavailable: 25%
+          type: RollingUpdate
+        template:
+          metadata:
+            creationTimestamp: null
+            labels:
+              app.kubernetes.io/instance: my-secure-juice-shop
+              app.kubernetes.io/name: juice-shop
+          spec:
+            containers:
+#------------sidecar container------------
+            - name: enforcer
+              ports:
+                - name: stats
+                  containerPort: 19010
+             command:
+               - /wrapper.sh
+               - -n=<namespace of the configuration controller>
+               - -m=<kwaf controller service name>
+               - -p=<namespace>/<profile>
+               - -t=<tag>
+               - -c=<front_port>:<policy>:127.0.0.1:<back_port>
+               - -l=$HOSTNAME_access.log"
+               - -f=$HOSTNAME_security.log"
+             imagePullPolicy: IfNotPresent
+             image: <path/kwaf-bootstrap-image/tag-names>
+             env:
+               - name: ENFORCER_OPT_L
+               value: info
+               - name: ENFORCER_OPT_BASE_ID
+               value: "321"
+             volumeMounts:
+               - mountPath: /logs
+               name: logs-volume
+             readinessProbe:
+               timeoutSeconds: 5
+               failureThreshold: 3
+               successThreshold: 1
+               httpGet:
+                 path: /
+                 port: <front port>
+                 scheme: HTTP
+             livenessProbe:
+               timeoutSeconds: 5
+               failureThreshold: 3
+               successThreshold: 1
+               httpGet:
+                 path: /
+                 port: <front port>
+                 scheme: HTTP
+#------------loging container------------
+            - name: logrotate
+              image: <path/kwaf-logrotate-image/tag-names>
+              imagePullPolicy: IfNotPresent
+              volumeMounts:
+               - name: logs-volume
+                 mountPath: /logs
+#------------log processor container------------
+            - name: fluentbit
+              image: <path/kwaf-fluentbit-image/tag-names>
+              imagePullPolicy: IfNotPresent
+              env:
+                - name: FB_LS_HOST
+                  value : <Log Stash service name>
+                - name: FB_PREFIX
+                  value: <Unique per app prefix>
+                resources:
+                  {}
+                volumeMounts:
+                - name: securebeat-client-volume
+                  mountPath: /etc/securebeat/client
+                - name: securebeat-ca-volume
+                  mountPath: /etc/securebeat/ca
+                - name: logs-volume
+                  mountPath: /logs
+            volumes:
+            - name: securebeat-ca-volume
+              configMap:
+                name: waas-securebeat-ca-config
+            - name: securebeat-client-volume
+              secret:
+                secretName: waas-securebeat-client-secret
+            - name: logs-volume
+              emptyDir: {}
+#------------app container------------
+            - name: juice-shop   
+              image: localhost:5000/moded-juice-shop:latest
+              imagePullPolicy: IfNotPresent
+              livenessProbe:
+                failureThreshold: 3
+                httpGet:
+                  path: /
+                  port: http
+                  scheme: HTTP
+                periodSeconds: 10
+                successThreshold: 1
+                timeoutSeconds: 1
+              ports:
+              - containerPort: 3000
+                name: http
+                protocol: TCP
+              readinessProbe:
+                failureThreshold: 3
+                httpGet:
+                  path: /
+                  port: http
+                  scheme: HTTP
+                periodSeconds: 10
+                successThreshold: 1
+                timeoutSeconds: 1
+              resources: {}
+              securityContext: {}
+              terminationMessagePath: /dev/termination-log
+              terminationMessagePolicy: File
+            dnsPolicy: ClusterFirst
+            restartPolicy: Always
+            schedulerName: default-scheduler
+            securityContext: {}
+            terminationGracePeriodSeconds: 30
+
+

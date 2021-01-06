@@ -25,3 +25,5 @@ NodeIP3: 127.0.0.1
 #
 
 InstallerTgz:  KubernetesWAF-1-4-0.tgz
+
+WaasVersion: 1.4.0

@@ -31,7 +31,7 @@
   command: docker rm --force base-juice-shop
   ignore_errors: yes
 
-- name: Create a Service object from an inline definition
+- name: Create a service for juice-shop
   community.kubernetes.k8s:
     state: present
     definition:
@@ -141,13 +141,12 @@
         name: juice-box-ing
         namespace: default
         annotations:
-          nginx.ingress.kubernetes.io/app-root: /juice-insecure/
-          nginx.ingress.kubernetes.io/rewrite-target: /
+          nginx.ingress.kubernetes.io/rewrite-target: /$2
       spec:
         rules:
         - http:
             paths:
-            - path: /
+            - path: /juice-insecure(/|$)(.*)
               pathType: Prefix
               backend:
                 service:
