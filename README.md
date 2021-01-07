@@ -33,6 +33,9 @@ somedirectory _
 ```
 
 run the bootstrap.sh script as root 
+
 follow the instructions 
+
 expect the installer to run for a while (~1H) 
+
 Enjoy !
