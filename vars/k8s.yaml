@@ -7,7 +7,7 @@
 MultiNodeCluster: false
 
 # this defines the IPs where the cluster should be deployed. Only NodeIP1 will be used if MultiNodeCluster is false
-NodeIP1: 172.27.200.120 
+NodeIP1: 127.0.0.1 
 NodeIP2: 127.0.0.1
 NodeIP3: 127.0.0.1
 
