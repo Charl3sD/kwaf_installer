@@ -8,9 +8,17 @@ this playbook is meant to:
 
 ### How-to use 
 
-clone this repository to a directory on a dedicated CentOS 7 machine 
+provision a Centos 7 server machine
 
-The Kwaf install archive is expected to be in the directory where you cloned this repo
+
+ | CPU | RAM | Disk
+--- | --- | --- | ---
+Minimum | 6 | 12GB | 20GB
+Recomended | 8 | 20GB | 30GB
+
+clone this repository to a directory on a *dedicated* CentOS 7 machine 
+
+The Radware Kwaf install archive is expected to be in the parent directory where this installer resides
 ex:
 ```
 somedirectory _
