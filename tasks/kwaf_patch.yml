@@ -1,4 +1,9 @@
 ---
+
+- name: Include vars from k8s.yaml
+  include_vars:
+    file: k8s.yaml
+
 - name: >-
     Patch waas-elasticsearch-deployment statefulset to add node.max_local_storage_nodes value of 10 instead of default (1)
     Otherwise the pods never launch correctly and throw a lock error on the volume

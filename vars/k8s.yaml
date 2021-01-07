@@ -16,3 +16,4 @@ InstallerTgz:  KubernetesWAF-1-4-0.tgz
 
 # used to manage docker images, should match the release installed 
 WaasVersion: 1.4.0
+

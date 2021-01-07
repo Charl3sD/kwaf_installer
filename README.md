@@ -1,14 +1,14 @@
 ## Radware kubernetes waf installer
-this playbook is meant to:
+this installer is meant to deploy automaticaly a radware kubernetes waf for Lab and demo purposes and does the following:
 - configure a centos7 machine into a K8s cluster (support for a 3 node cluster will be added in the future)
-- deploy a test application ([OWASP juice shop](https://owasp.org/www-project-juice-shop/))
-- add protection with Radware Kwaf
+- deploy 2 instances of a demo application ([OWASP juice shop](https://owasp.org/www-project-juice-shop/))
+- protect 1 of those instances with Radware Kwaf
 
 ---
 
 ### How-to use 
 
-provision a Centos 7 server machine
+provision a Centos 7 server machine and configure networking
 
 
 |Specs| CPU | RAM | Disk|

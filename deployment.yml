@@ -16,3 +16,5 @@
          tags: [kwaf_patch]
        - include: tasks/juice_secure_deploy.yml
          tags: [juice_secure]
+       - include: tasks/print_urls.yml
+         tags: [urls]

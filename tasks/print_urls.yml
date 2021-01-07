@@ -1,0 +1,12 @@
+---
+- name: Include vars from k8s.yaml
+  include_vars:
+    file: k8s.yaml
+
+- name : 
+  debug:
+    msg:
+    - "You should be able to reach your applications at the folowing adresses:"
+    - "Waf management interface:  http://{{NodeIP1}}/"
+    - "Secured instance of juice shop: http://{{NodeIP1}}/juice-secure/"
+    - "Unsecured instance of juice shop: http://{{NodeIP1}}/juice-insecure/"
