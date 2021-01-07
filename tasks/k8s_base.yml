@@ -87,19 +87,3 @@
     backup: yes
   with_fileglob:
     - files/group_vars/k8s-cluster/*.yml
-
-- name: add an alias for kubectl in bash profile
-  lineinfile:
-    path: ~/.bash_profile
-    regexp: 'kubectl'
-    line: 'alias k=kubectl'
-
-- name: Configure bash autocomplete for kubectl
-  shell: kubectl completion bash >/etc/bash_completion.d/kubectl
-
-
-- name: Configure bash autocomplete for kubectl alias
-  lineinfile:
-    path: ~/.bash_profile
-    regexp: '__start_kubectl'
-    line: 'complete -F __start_kubectl k'

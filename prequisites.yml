@@ -8,7 +8,6 @@
        tags: [packages]
      - include: tasks/epel.yml
        tags: [packages]
-     - include: tasks/ssh_keys.yml
      - include: tasks/disable_selinux_firewall.yml
        tags: [selinux]
      - include: tasks/services.yml   

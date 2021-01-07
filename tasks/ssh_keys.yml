@@ -1,5 +1,0 @@
-- name: Add github key
-  authorized_key:
-    user: root
-    state: present
-    key: "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQCsAIZn5dBonF3za02bU4QjEzmtLAPkpTaIlosVF99Et2rouLyigsr8x+35TBXNZVZZkka84wfosqoU/4+rasbLT6FjhAeli7H0w/wPQsknZCpi8013IcIzhN4isplWA8CJZPLJ+2Wm7FbhA23Z99dYkzQ5YB6Wn8jhthl5D5e3Y4R/zcdAXLKz7DTOcudxB0opLWDPyvLycyZ/S9vJwjg7ZGm+0Z1GSMwLZM6Bh66iHX0PZdgVUi90ANFmR7qQt4iIRA+j7pAFiByvM71qOqlE+d7l82D7Lk9xyoFciy2xi8PSUsvYQdY1zrB49+x0mpFuVhkCSwZ627DcRP3vAEUn admin@ns1.radwarelabs.ca"

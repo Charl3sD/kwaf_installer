@@ -49,8 +49,8 @@ fi
 echo "Wunderbar ! ... Setting up installer requirements"
 yum -y install epel-release
 yum repolist
-yum -y install ansible git vim
-
+yum -y install python3 git vim
+pip3 install ansible
 ansible-galaxy collection install community.kubernetes community.general
 
 git clone https://github.com/kubernetes-sigs/kubespray $workingdir/../kubespray

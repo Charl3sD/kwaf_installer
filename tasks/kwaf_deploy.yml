@@ -8,11 +8,11 @@
     path: "{{ playbook_dir }}/../kwaf_images"
     state: directory
 
-#- name: Extract Kwaf installer ... you have time to grab coffee ☕
-#  unarchive:
-#    src: "{{ playbook_dir }}/../{{InstallerTgz}}"
-#    dest: "{{ playbook_dir }}/../kwaf_images"
-#    remote_src: True
+- name: Extract Kwaf installer ... you have time to grab coffee ☕
+  unarchive:
+    src: "{{ playbook_dir }}/../{{InstallerTgz}}"
+    dest: "{{ playbook_dir }}/../kwaf_images"
+    remote_src: True
 
 - name: Find archives at root level
   find: paths="{{ playbook_dir }}/../kwaf_images/" patterns="*.tgz"
@@ -24,13 +24,6 @@
     dest: "{{ playbook_dir }}/../kwaf_images"
     remote_src: True
   with_items: "{{ root_result.files }}"
-
-- name: Create a namespace for kwaf (waas)
-  community.kubernetes.k8s:
-    name: waas
-    api_version: v1
-    kind: Namespace
-    state: present
 
 - name: >-
     Install Radware v1 custom ressource definitions
@@ -99,3 +92,20 @@
                   name: waas-gui-service
                   port:
                     number: 8080
+
+- name: add an alias for kubectl in bash profile
+  lineinfile:
+    path: ~/.bash_profile
+    regexp: 'kubectl'
+    line: 'alias k=kubectl'
+
+- name: Configure bash autocomplete for kubectl
+  shell: kubectl completion bash >/etc/bash_completion.d/kubectl
+
+
+- name: Configure bash autocomplete for kubectl alias
+  lineinfile:
+    path: ~/.bash_profile
+    regexp: '__start_kubectl'
+    line: 'complete -F __start_kubectl k'
+

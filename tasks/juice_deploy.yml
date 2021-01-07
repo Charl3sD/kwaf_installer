@@ -31,6 +31,13 @@
   command: docker rm --force base-juice-shop
   ignore_errors: yes
 
+- name: Create a namespace for our stuff
+  community.kubernetes.k8s:
+    name: waas
+    api_version: v1
+    kind: Namespace
+    state: present
+
 - name: Create a service for juice-shop
   community.kubernetes.k8s:
     state: present
