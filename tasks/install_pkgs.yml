@@ -14,6 +14,8 @@
   yum: name={{ packages }} state=installed
   vars:
     packages:
+    - bash-completion
+    - bash-completion-extras
     - python3
     - libselinux-python
     - libselinux-python3

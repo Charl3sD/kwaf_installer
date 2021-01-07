@@ -1,4 +1,9 @@
 ---
+
+- name: Include vars from k8s.yaml
+  include_vars:
+    file: k8s.yaml
+
 - name: Create a policy to secure our Application (full)
   community.kubernetes.k8s:
     state: present
@@ -7,23 +12,23 @@
       kind: Profile
       metadata:
         annotations:
-        name: kwaf-full-protection-profile
-        namespace: default
+        name: kwaf-juice-shop-full-protection-profile
+        namespace: waas
       spec:
         policies:
         - classifiers:
           - hostname: '*'
-            id: example_app_classifier
+            id: example-appiclassifier
             path:
               operand: Prefix
               value: /
-            protectionId: full_protection
+            protectionId: full-protection
           name: FullProtectionPolicy
           operatorEmail: support@example.com
           protections:
           - expressions:
               opMode: Passive
-            id: full_protection
+            id: full-protection
             activityTracking:
               blockPeriod: 5m
               countStatic: false
@@ -65,7 +70,7 @@
           app.kubernetes.io/name: juice-shop
           app.kubernetes.io/version: v12.0.2
         name: my-secure-juice-shop
-        namespace: default
+        namespace: waas
       spec:
         progressDeadlineSeconds: 600
         replicas: 1
@@ -87,82 +92,8 @@
               app.kubernetes.io/name: juice-shop
           spec:
             containers:
-#------------sidecar container------------
-            - name: enforcer
-              ports:
-                - name: stats
-                  containerPort: 19010
-             command:
-               - /wrapper.sh
-               - -n=<namespace of the configuration controller>
-               - -m=<kwaf controller service name>
-               - -p=<namespace>/<profile>
-               - -t=<tag>
-               - -c=<front_port>:<policy>:127.0.0.1:<back_port>
-               - -l=$HOSTNAME_access.log"
-               - -f=$HOSTNAME_security.log"
-             imagePullPolicy: IfNotPresent
-             image: <path/kwaf-bootstrap-image/tag-names>
-             env:
-               - name: ENFORCER_OPT_L
-               value: info
-               - name: ENFORCER_OPT_BASE_ID
-               value: "321"
-             volumeMounts:
-               - mountPath: /logs
-               name: logs-volume
-             readinessProbe:
-               timeoutSeconds: 5
-               failureThreshold: 3
-               successThreshold: 1
-               httpGet:
-                 path: /
-                 port: <front port>
-                 scheme: HTTP
-             livenessProbe:
-               timeoutSeconds: 5
-               failureThreshold: 3
-               successThreshold: 1
-               httpGet:
-                 path: /
-                 port: <front port>
-                 scheme: HTTP
-#------------loging container------------
-            - name: logrotate
-              image: <path/kwaf-logrotate-image/tag-names>
-              imagePullPolicy: IfNotPresent
-              volumeMounts:
-               - name: logs-volume
-                 mountPath: /logs
-#------------log processor container------------
-            - name: fluentbit
-              image: <path/kwaf-fluentbit-image/tag-names>
-              imagePullPolicy: IfNotPresent
-              env:
-                - name: FB_LS_HOST
-                  value : <Log Stash service name>
-                - name: FB_PREFIX
-                  value: <Unique per app prefix>
-                resources:
-                  {}
-                volumeMounts:
-                - name: securebeat-client-volume
-                  mountPath: /etc/securebeat/client
-                - name: securebeat-ca-volume
-                  mountPath: /etc/securebeat/ca
-                - name: logs-volume
-                  mountPath: /logs
-            volumes:
-            - name: securebeat-ca-volume
-              configMap:
-                name: waas-securebeat-ca-config
-            - name: securebeat-client-volume
-              secret:
-                secretName: waas-securebeat-client-secret
-            - name: logs-volume
-              emptyDir: {}
 #------------app container------------
-            - name: juice-shop   
+            - name: juice-shop
               image: localhost:5000/moded-juice-shop:latest
               imagePullPolicy: IfNotPresent
               livenessProbe:
@@ -191,6 +122,80 @@
               securityContext: {}
               terminationMessagePath: /dev/termination-log
               terminationMessagePolicy: File
+#------------sidecar container------------
+            - name: enforcer
+              ports:
+                - name: stats
+                  containerPort: 19010
+              command:
+                - /wrapper.sh
+                - -n=waas
+                - -m=waas-controller-service
+                - -p=waas/kwaf-juice-shop-full-protection-profile
+                - -t=1.4.0
+                - -c=80:FullProtectionPolicy:127.0.0.1:3000
+                - -l=$HOSTNAME_access.log"
+                - -f=$HOSTNAME_security.log"
+              imagePullPolicy: IfNotPresent
+              image: "localhost:5000/waas-bootstrap:{{WaasVersion}}"
+              env:
+                - name: ENFORCER_OPT_L
+                  value: info
+                - name: ENFORCER_OPT_BASE_ID
+                  value: "321"
+              volumeMounts:
+                - mountPath: /logs
+                  name: logs-volume
+              readinessProbe:
+                timeoutSeconds: 5
+                failureThreshold: 3
+                successThreshold: 1
+                httpGet:
+                  path: /
+                  port: 80
+                  scheme: HTTP
+              livenessProbe:
+                timeoutSeconds: 5
+                failureThreshold: 3
+                successThreshold: 1
+                httpGet:
+                  path: /
+                  port: 80
+                  scheme: HTTP
+#------------loging container------------
+            - name: logrotate
+              image: "localhost:5000/waas-logrotate:{{WaasVersion}}"
+              imagePullPolicy: IfNotPresent
+              volumeMounts:
+               - name: logs-volume
+                 mountPath: /logs
+#------------log processor container------------
+            - name: fluentbit
+              image: "localhost:5000/waas-fluentbit:{{WaasVersion}}"
+              imagePullPolicy: IfNotPresent
+              env:
+                - name: FB_LS_HOST
+                  value :  waas-logstash-service.waas.svc.cluster.local
+                - name: FB_PREFIX
+                  value: my-secure-juice-shop
+                  resources:
+                    {}
+              volumeMounts:
+                - name: securebeat-client-volume
+                  mountPath: /etc/securebeat/client
+                - name: securebeat-ca-volume
+                  mountPath: /etc/securebeat/ca
+                - name: logs-volume
+                  mountPath: /logs
+            volumes:
+            - name: securebeat-ca-volume
+              configMap:
+                name: waas-securebeat-ca-config
+            - name: securebeat-client-volume
+              secret:
+                secretName: waas-securebeat-client-secret
+            - name: logs-volume
+              emptyDir: {}
             dnsPolicy: ClusterFirst
             restartPolicy: Always
             schedulerName: default-scheduler
@@ -198,3 +203,50 @@
             terminationGracePeriodSeconds: 30
 
 
+- name: Create a secured juicy service
+  community.kubernetes.k8s:
+    state: present
+    definition:
+      apiVersion: v1
+      kind: Service
+      metadata:
+        labels:
+          app.kubernetes.io/instance: my-secure-juice-shop
+          app.kubernetes.io/name: juice-shop
+          app.kubernetes.io/version: v12.0.2
+        name: my-secure-juice-shop-svc
+        namespace: waas
+      spec:
+        ports:
+        - name: http
+          port: 80
+          protocol: TCP
+          targetPort: http
+        selector:
+          app.kubernetes.io/instance: my-secure-juice-shop
+          app.kubernetes.io/name: juice-shop
+        sessionAffinity: None
+        type: ClusterIP
+
+- name: Create a secure juicy ingress endpoint
+  community.kubernetes.k8s:
+    state: present
+    definition:
+      apiVersion: networking.k8s.io/v1
+      kind: Ingress
+      metadata:
+        name: secure-juice-box-ing
+        namespace: waas
+        annotations:
+          nginx.ingress.kubernetes.io/rewrite-target: /$2
+      spec:
+        rules:
+        - http:
+            paths:
+            - path: /juice-secure(/|$)(.*)
+              pathType: Prefix
+              backend:
+                service:
+                  name: my-secure-juice-shop-svc
+                  port:
+                    number: 80

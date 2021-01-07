@@ -14,3 +14,5 @@
          tags: [kwaf]
        - include: tasks/kwaf_patch.yml
          tags: [kwaf_patch]
+       - include: tasks/juice_secure_deploy.yml
+         tags: [juice_secure]

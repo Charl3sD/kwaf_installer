@@ -19,28 +19,32 @@ cat <<- EOF
                             /_/|_| |__/|__/_/ |_/_/    
 
 ==================================================================================
-                               ! WARNING ACHTUNG !
+                                  ! WARNING !
 
-This script will modify significantly this machine's configuration. 
+This installer will significantly modify this machine's configuration. 
 Run on (a) dedicated CentOS 7 machine(s) !
 
 ==================================================================================
                              🎁 What's in the box 🎁
 
 - a declarative and idempotent installer
-- a Kubernetes 1.19 cluster ⎈ (1 or 3 nodes)
+- a Kubernetes 1.19 cluster ⎈
 - helm 3 (no need for tiller)
 - A private docker registry 🐳
-- JuiceBox (a sample insecure application)
+- OWASP Juice shop (a sample insecure application)
 - Radware Kwaf
+- a secured instance of juice shop
 
-==================================================================================
-Writen and maintained by Charles Durocher : charles.durocher@radware.com
 ==================================================================================
 
 EOF
 
 read -p "continue ? Ctrl+c to abort"
+
+if [ ! -f $workingdir/../KubernetesWAF*.tgz ]; then
+    echo "Kwaf installer not found, please make sure it's in the installer's parent directory !"
+    exit 
+fi
 
 echo "Wunderbar ! ... Setting up installer requirements"
 yum -y install epel-release
