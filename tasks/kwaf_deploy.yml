@@ -3,25 +3,25 @@
   include_vars:
     file: k8s.yaml
 
-- name: Creates KwafInst directory to extract installer 
+- name: Creates kwaf_images directory to extract installer 
   file:
-    path: "{{ playbook_dir }}/../KwafInst"
+    path: "{{ playbook_dir }}/../kwaf_images"
     state: directory
 
 #- name: Extract Kwaf installer ... you have time to grab coffee ☕
 #  unarchive:
 #    src: "{{ playbook_dir }}/../{{InstallerTgz}}"
-#    dest: "{{ playbook_dir }}/../KwafInst"
+#    dest: "{{ playbook_dir }}/../kwaf_images"
 #    remote_src: True
 
 - name: Find archives at root level
-  find: paths="{{ playbook_dir }}/../KwafInst/" patterns="*.tgz"
+  find: paths="{{ playbook_dir }}/../kwaf_images/" patterns="*.tgz"
   register: root_result
 
 - name: Extract root level Kwaf sub-archives
   unarchive: 
     src: "{{ item.path }}" 
-    dest: "{{ playbook_dir }}/../KwafInst"
+    dest: "{{ playbook_dir }}/../kwaf_images"
     remote_src: True
   with_items: "{{ root_result.files }}"
 
@@ -39,7 +39,7 @@
     state: present
     definition: "{{ lookup('file', '{{item}}') | from_yaml }}"
   with_fileglob:
-    - "{{ playbook_dir }}/../KwafInst/waas/custom-resources/v1/*.yaml"
+    - "{{ playbook_dir }}/../kwaf_images/waas/custom-resources/v1/*.yaml"
 
 - name: >-
     Install Radware v1beta1 custom ressource definitions
@@ -48,7 +48,7 @@
     state: present
     definition: "{{ lookup('file', '{{item}}') | from_yaml }}"
   with_fileglob:
-    - "{{ playbook_dir }}/../KwafInst/waas/custom-resources/v1beta1/*.yaml"
+    - "{{ playbook_dir }}/../kwaf_images/waas/custom-resources/v1beta1/*.yaml"
 
 - name: Log into private registry and force re-authorization
   community.general.docker_login:
@@ -64,7 +64,7 @@
     push: yes
     load_path: "{{item}}"
   with_fileglob:
-    - "{{ playbook_dir }}/../KwafInst/waas_images/*.tar"
+    - "{{ playbook_dir }}/../kwaf_images/waas_images/*.tar"
 
 - name: Deploy Kwaf
   community.kubernetes.helm:
@@ -75,7 +75,7 @@
     values_files:
       - "{{ playbook_dir }}/files/waas_values.yaml"
   with_fileglob:
-    - "{{ playbook_dir }}/../KwafInst/waas_helm*.tgz"
+    - "{{ playbook_dir }}/../kwaf_images/waas_helm*.tgz"
 
 - name: Create an ingress endpoint for Kwaf
   community.kubernetes.k8s:
