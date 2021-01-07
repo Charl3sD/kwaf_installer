@@ -11,10 +11,10 @@ this playbook is meant to:
 provision a Centos 7 server machine
 
 
- | CPU | RAM | Disk
---- | --- | --- | ---
-Minimum | 6 | 12GB | 20GB
-Recomended | 8 | 20GB | 30GB
+|Specs| CPU | RAM | Disk|
+| --- | --- | --- | --- |
+|Minimum | 6 | 12GB | 20GB|
+|Recomended | 8 | 20GB | 30GB|
 
 clone this repository to a directory on a *dedicated* CentOS 7 machine 
 
