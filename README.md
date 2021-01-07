@@ -16,7 +16,7 @@ provision a Centos 7 server machine
 |Minimum | 6 | 12GB | 20GB|
 |Recomended | 8 | 20GB | 30GB|
 
-clone this repository to a directory on a *dedicated* CentOS 7 machine 
+clone this repository to a directory on your *dedicated* CentOS 7 machine 
 
 The Radware Kwaf install archive is expected to be in the parent directory where this installer resides
 ex:
@@ -32,4 +32,7 @@ somedirectory _
                |-KubernetesWAF-1-4-0.tgz
 ```
 
-
+run the bootstrap.sh script as root 
+follow the instructions 
+expect the installer to run for a while (~1H) 
+Enjoy !
