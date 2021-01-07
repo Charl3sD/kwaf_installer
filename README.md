@@ -13,8 +13,8 @@ provision a Centos 7 server machine and configure networking
 
 |Specs| CPU | RAM | Disk|
 | --- | --- | --- | --- |
-|Minimum | 6 | 12GB | 20GB|
-|Recomended | 8 | 20GB | 30GB|
+|Minimum | 6 | 12GB | 25GB|
+|Recomended | 8 | 20GB | 35GB|
 
 clone this repository to a directory on your *dedicated* CentOS 7 machine 
 
@@ -22,13 +22,13 @@ The Radware Kwaf install archive is expected to be in the parent directory where
 ex:
 ```
 somedirectory _
-               |-kwaf
-               |  ├── files
-               |  │   └── group_vars
-               |  │       ├── all
-               |  │       └── k8s-cluster
-               |  ├── tasks
-               |  └── vars
+               |-kwaf_installer
+               |             ├── files
+               |             │   └── group_vars
+               |             │       ├── all
+               |             │       └── k8s-cluster
+               |             ├── tasks
+               |             └── vars
                |-KubernetesWAF-1-4-0.tgz
 ```
 
