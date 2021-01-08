@@ -96,8 +96,8 @@ ansible-playbook -i $workingdir/../kubespray/inventory/kwaf.ini $workingdir/../k
 #done
 #
 
-echo "Getting OWASP Juice-Shop"
-git clone https://github.com/bkimminich/juice-shop.git $workingdir/../juice-shop
+#echo "Getting OWASP Juice-Shop"
+#git clone https://github.com/bkimminich/juice-shop.git $workingdir/../juice-shop
 
 echo "Begining Application deployment "
 #read -p "You will be prompted for the local SSH password. continue ?"
