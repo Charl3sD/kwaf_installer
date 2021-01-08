@@ -38,4 +38,10 @@ follow the instructions
 
 expect the installer to run for a while (~1H) 
 
+note that you can run parts of the install using tags defined in the prequisites.yml and deployment.yml Ansible playbooks:
+
+```
+ansible-playbook -i,127.0.0.1 deployment.yml -u root --private-key=~/.ssh/id_rsa --tags kwaf_patch 
+```
+
 Enjoy !

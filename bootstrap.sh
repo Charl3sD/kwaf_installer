@@ -60,9 +60,10 @@ read -p "please set the variables for your deployment, an editor will now be lau
 "${EDITOR:-vim}" $workingdir/vars/k8s.yaml
 
 if [ ! -f ~/.ssh/id_rsa.pub ]; then
-    ssh-keygen -t rsa
-    cat ~/.ssh/id_rsa.pub >> ~/.ssh/authorized_keys
+    ssh-keygen -b 2048 -t rsa -f ~/.ssh/id_rsa -q -N ""
 fi
+
+cat ~/.ssh/id_rsa.pub >> ~/.ssh/authorized_keys
 
 echo "Begining installation of cluster prequisites"
 #read -p "You will be prompted for the local SSH password. continue ?"
