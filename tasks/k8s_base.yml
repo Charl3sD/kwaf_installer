@@ -9,6 +9,17 @@
   include_vars:
     file: k8s.yaml
 
+- name: Disable StrictHostKeyChecking for hosts
+  lineinfile:
+    dest: ~/.ssh/config
+    regexp: "{{ item.regexp }}"
+    line: "{{ item.line }}"
+    mode: '0400'
+    create: yes
+  with_items:
+    - { regexp: "^Host", line: "host {{NodeIP1}} {{NodeIP2}} {{NodeIP3}}" }
+    - { regexp: "StrictHostKeyChecking", line: "    StrictHostKeyChecking no" }
+
 - name: template single node cluster
   template:
     src: "{{ playbook_dir }}/files/kubespray_inventory_single.ini.j2"
@@ -21,7 +32,7 @@
 - name: template multi node cluster
   template:
     src: "{{ playbook_dir }}/../kubespray/inventory/kwaf.ini"
-    dest: /root/test.conf
+    dest: "{{ playbook_dir }}/../kubespray/inventory/kwaf.ini"
     owner: root
     group: wheel
     mode: 0644
