@@ -134,8 +134,8 @@
                 - -p=waas/kwaf-juice-shop-full-protection-profile
                 - -t=1.4.0
                 - -c=80:FullProtectionPolicy:127.0.0.1:3000
-                - -l=$HOSTNAME_access.log"
-                - -f=$HOSTNAME_security.log"
+                - -l=$HOSTNAME_access.log
+                - -f=$HOSTNAME_security.log
               imagePullPolicy: IfNotPresent
               image: "localhost:5000/waas-bootstrap:{{WaasVersion}}"
               env:

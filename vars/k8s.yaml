@@ -18,5 +18,5 @@ InstallerTgz:  KubernetesWAF-1-4-0.tgz
 WaasVersion: 1.4.0
 
 # If you have a license, you can install it by modifying tasks/kwaf_patch.yml line 254
-# if your install il already done you can run only that part with:
+# if your install is already done you can run only that part with:
 # ansible-playbook -i,127.0.0.1 deployment.yml -u root --private-key=~/.ssh/id_rsa --tags kwaf_patch
