@@ -8,7 +8,7 @@ this installer is meant to deploy automaticaly a radware kubernetes waf for Lab 
 
 ### How-to use 
 
-provision a Centos 7 server machine and configure networking
+provision a Centos 7 server minimal machine and configure networking (netinstall issues are under inverstigation)
 
 
 |Specs| CPU | RAM | Disk|
