@@ -14,7 +14,7 @@
     dest: ~/.ssh/config
     regexp: "{{ item.regexp }}"
     line: "{{ item.line }}"
-    mode: '0400'
+    mode: '0600'
     create: yes
   with_items:
     - { regexp: "^Host", line: "host {{NodeIP1}} {{NodeIP2}} {{NodeIP3}}" }
