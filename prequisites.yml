@@ -3,8 +3,10 @@
 ### Only run specific tasks with tags: ansible-playbook -i,<IP> prequisites.yml -u root --tags "<tag>"
 ---
 - hosts: all
+  vars:
+    ansible_python_interpreter: '{{ ansible_playbook_python }}'
   tasks: 
-     - include: tasks/install_pkgs.yml
+     - include: tasks/install_pkgs_py3.yml
        tags: [packages]
      - include: tasks/epel.yml
        tags: [packages]

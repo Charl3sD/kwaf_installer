@@ -9,17 +9,6 @@
   include_vars:
     file: k8s.yaml
 
-- name: Disable StrictHostKeyChecking for hosts
-  lineinfile:
-    dest: ~/.ssh/config
-    regexp: "{{ item.regexp }}"
-    line: "{{ item.line }}"
-    mode: '0600'
-    create: yes
-  with_items:
-    - { regexp: '^Host', line: 'host {{NodeIP1}} {{NodeIP2}} {{NodeIP3}}' }
-    - { regexp: 'StrictHostKeyChecking', line: '    StrictHostKeyChecking no' }
-
 - name: template single node cluster
   template:
     src: "{{ playbook_dir }}/files/kubespray_inventory_single.ini.j2"
@@ -51,11 +40,6 @@
 - name: Install Helm - run installer
   command: "./get_helm.sh"
 
-- name: Install Helm - cleanup
-  file:
-    state: absent
-    path: "get_helm.sh"
-
 - name: Configure Helm - add a chart repo "stable"
   command: "helm repo add stable https://charts.helm.sh/stable"
 
@@ -64,7 +48,7 @@
 
 - name: Ajust Kubespray local_volume_provisioner template
   lineinfile:
-    path: "{{ playbook_dir }}/../kubespray/roles/kubernetes-apps/external_provisioner/local_volume_provisioner/templates/local-volume-provisioner-sc.yml.j2"
+    path: "{{ playbook_dir }}{{'/../kubespray/roles/kubernetes-apps/external_provisioner/local_volume_provisioner/templates/local-volume-provisioner-sc.yml.j2'}}"
     regexp: 'volumeBindingMode'
     line: 'volumeBindingMode: Immediate'
 

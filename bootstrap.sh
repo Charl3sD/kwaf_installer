@@ -49,7 +49,7 @@ fi
 echo "Wunderbar ! ... Setting up installer requirements"
 yum -y install epel-release
 yum repolist
-yum -y install python3 git vim
+yum -y install python3 dnf git vim
 pip3 install ansible==2.9.14
 ansible-galaxy collection install community.kubernetes community.general
 
@@ -64,6 +64,10 @@ if [ ! -f ~/.ssh/id_rsa.pub ]; then
 fi
 
 cat ~/.ssh/id_rsa.pub >> ~/.ssh/authorized_keys
+
+echo "Begining installation of OS prequisites"
+#read -p "You will be prompted for the local SSH password. continue ?"
+ansible-playbook -i,127.0.0.1  $workingdir/prequisites-py2.yml -u root --private-key=~/.ssh/id_rsa
 
 echo "Begining installation of cluster prequisites"
 #read -p "You will be prompted for the local SSH password. continue ?"

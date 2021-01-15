@@ -1,0 +1,25 @@
+---
+- name: Use pip to install virtualenv
+  command: /usr/bin/pip3 install -U virtualenv
+
+- name: Use pip to install docker python SDK
+  command: /usr/bin/pip3 install -U docker
+
+- name: Copy conf files for sshd
+  copy:
+    src: "{{ item.src }}"
+    dest: "{{ item.dest }}"
+    owner: root
+    group: root
+    mode: 0644
+  with_items:
+     - src: "files/sshd_config"
+       dest: "/etc/ssh/sshd_config"
+
+- name: Copy conf file for ssh client
+  copy:
+    src: "files/ssh_config"
+    dest: "~/.ssh/config"
+    owner: root
+    group: root
+    mode: 0600

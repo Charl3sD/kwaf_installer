@@ -1,0 +1,36 @@
+---
+- name: update ssl
+  dnf:
+    name:
+      - ca-certificates
+      - openssl
+      - nss
+    state: latest
+
+- name: Run update-ca-trust 
+  command: /usr/bin/update-ca-trust
+
+- name: Ensure base packages are installed
+  dnf:
+    name :
+      - bash-completion
+      - bash-completion-extras
+      - python3
+      - libselinux-python
+      - libselinux-python3
+      - vim-enhanced
+      - rsync
+      - man
+      - wget
+      - bzip2
+      - screen
+      - lsof
+      - tzdata
+      - rsyslog
+      - file
+      - xz
+      - psmisc
+      - net-tools
+      - oddjob-mkhomedir
+      - git
+    state: latest

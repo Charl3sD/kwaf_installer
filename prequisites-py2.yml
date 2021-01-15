@@ -1,0 +1,9 @@
+## Connexion with root+pass:  ansible-playbook -i,<IP>  prequisites.yml -u root -k  
+### Connexion with root+ssh_key:  ansible-playbook -i,<IP> prequisites.yml -u root
+### Only run specific tasks with tags: ansible-playbook -i,<IP> prequisites.yml -u root --tags "<tag>"
+---
+- hosts: all
+  tasks: 
+     - include: tasks/install_pkgs_py2.yml
+       tags: [packages]
+
