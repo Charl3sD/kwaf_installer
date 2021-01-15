@@ -48,7 +48,7 @@
 
 - name: Ajust Kubespray local_volume_provisioner template
   lineinfile:
-    path: "{{ playbook_dir }}{{'/../kubespray/roles/kubernetes-apps/external_provisioner/local_volume_provisioner/templates/local-volume-provisioner-sc.yml.j2'}}"
+    path: "{{ playbook_dir }}/../kubespray/roles/kubernetes-apps/external_provisioner/local_volume_provisioner/templates/local-volume-provisioner-sc.yml.j2"
     regexp: 'volumeBindingMode'
     line: 'volumeBindingMode: Immediate'
 
