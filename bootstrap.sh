@@ -50,7 +50,9 @@ echo "Wunderbar ! ... Setting up installer requirements"
 yum -y install epel-release
 yum repolist
 yum -y install python3 dnf git vim
+
 pip3 install ansible==2.9.16 paramiko
+
 ansible-galaxy collection install community.kubernetes community.general
 
 git clone https://github.com/kubernetes-sigs/kubespray $workingdir/../kubespray
@@ -66,44 +68,14 @@ fi
 cat ~/.ssh/id_rsa.pub >> ~/.ssh/authorized_keys
 
 echo "Begining installation of OS prequisites"
-#read -p "You will be prompted for the local SSH password. continue ?"
-ansible-playbook -i,127.0.0.1  $workingdir/prequisites-py2.yml -u root --private-key=~/.ssh/id_rsa
+ansible-playbook -i,127.0.0.1  $workingdir/prequisites-py2.yml -u root --private-key=~/.ssh/id_rsa -v
 
 echo "Begining installation of cluster prequisites"
-#read -p "You will be prompted for the local SSH password. continue ?"
-ansible-playbook -i,127.0.0.1  $workingdir/prequisites.yml -u root --private-key=~/.ssh/id_rsa
+ansible-playbook -i,127.0.0.1  $workingdir/prequisites.yml -u root --private-key=~/.ssh/id_rsa -v
 
 #echo "⎈ Begining cluster deployment ⎈ (~20min)"
 ansible-playbook -i $workingdir/../kubespray/inventory/kwaf.ini $workingdir/../kubespray/cluster.yml -b -v --private-key=~/.ssh/id_rsa
 
-#echo "⎈ Begining cluster deployment ⎈ (~20min)"
-#PS3='Please select wether you want to deploy using an SSH password or Key: '
-#options=("Password" "Key" "Quit")
-#select opt in "${options[@]}"
-#do
-#    case $opt in
-#        "Password")
-#            echo "Installing using SSH password"
-#            ansible-playbook -i $workingdir/../kubespray/inventory/kwaf.ini $workingdir/../kubespray/cluster.yml -b -v -k
-#            break
-#            ;;
-#        "Key")
-#            echo "Installing using SSH Key from ~/.ssh/id_rsa"
-#            ansible-playbook -i $workingdir/../kubespray/inventory/kwaf.ini $workingdir/../kubespray/cluster.yml -b -v --private-key=~/.ssh/id_rsa
-#            break
-#            ;;
-#        "Quit")
-#            break
-#            ;;
-#        *) echo "invalid option $REPLY";;
-#    esac
-#done
-#
-
-#echo "Getting OWASP Juice-Shop"
-#git clone https://github.com/bkimminich/juice-shop.git $workingdir/../juice-shop
-
 echo "Begining Application deployment "
-#read -p "You will be prompted for the local SSH password. continue ?"
-ansible-playbook -i,127.0.0.1  $workingdir/deployment.yml -u root --private-key=~/.ssh/id_rsa
+ansible-playbook -i,127.0.0.1  $workingdir/deployment.yml -u root --private-key=~/.ssh/id_rsa -v
 
