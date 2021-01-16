@@ -1,5 +1,5 @@
 ---
-- name: remove old containers if present
+- name: remove old containers if present ↓↓↓↓ FAILED! is expected here ↓↓↓↓
   command: docker rm --force base-juice-shop
   ignore_errors: yes
 
