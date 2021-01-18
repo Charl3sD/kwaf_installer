@@ -66,10 +66,10 @@
           deployment.kubernetes.io/revision: "1"
         generation: 1
         labels:
-          app.kubernetes.io/instance: my-bwapp-secure
+          app.kubernetes.io/instance: my-secure-bwapp
           app.kubernetes.io/name: bwapp
           app.kubernetes.io/version: v12.0.2
-        name: my-bwapp-secure
+        name: my-secure-bwapp
         namespace: waas
       spec:
         progressDeadlineSeconds: 600
@@ -77,7 +77,7 @@
         revisionHistoryLimit: 10
         selector:
           matchLabels:
-            app.kubernetes.io/instance: my-bwapp-secure
+            app.kubernetes.io/instance: my-secure-bwapp
             app.kubernetes.io/name: bwapp
         strategy:
           rollingUpdate:
@@ -88,13 +88,13 @@
           metadata:
             creationTimestamp: null
             labels:
-              app.kubernetes.io/instance: my-bwapp-secure
+              app.kubernetes.io/instance: my-secure-bwapp
               app.kubernetes.io/name: bwapp
           spec:
             containers:
 #------------app container------------
             - name: bwapp
-              image: localhost:5000/feltsecure/bwapp:latest
+              image: localhost:5000/feltsecure/owasp-bwapp:latest
               imagePullPolicy: IfNotPresent
               livenessProbe:
                 failureThreshold: 3
@@ -211,10 +211,10 @@
       kind: Service
       metadata:
         labels:
-          app.kubernetes.io/instance: my-bwapp-secure
+          app.kubernetes.io/instance: my-secure-bwapp
           app.kubernetes.io/name: bwapp
           app.kubernetes.io/version: v12.0.2
-        name: my-bwapp-secure-svc
+        name: my-secure-bwapp-svc
         namespace: waas
       spec:
         ports:
@@ -223,7 +223,7 @@
           protocol: TCP
           targetPort: 80
         selector:
-          app.kubernetes.io/instance: my-bwapp-secure
+          app.kubernetes.io/instance: my-secure-bwapp
           app.kubernetes.io/name: bwapp
         sessionAffinity: None
         type: ClusterIP
@@ -247,7 +247,7 @@
               pathType: Prefix
               backend:
                 service:
-                  name: my-bwapp-secure-svc
+                  name: my-secure-bwapp-svc
                   port:
                     number: 80
 
