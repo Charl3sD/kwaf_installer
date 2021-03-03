@@ -15,7 +15,7 @@ provision a Centos 7 server minimal machine and configure networking (netinstall
 
 |Specs| CPU | RAM | Disk|
 | --- | --- | --- | --- |
-|Minimum | 6 | 12GB | 25GB|
+|Minimum | 6 | 16GB | 25GB|
 |Recomended | 8 | 20GB | 35GB|
 
 clone this repository to a directory on your *dedicated* CentOS 7 machine 

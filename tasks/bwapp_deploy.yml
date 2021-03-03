@@ -4,12 +4,12 @@
   ignore_errors: yes
 
 - name: Pull bwapp base image
-  community.general.docker_image:
+  docker_image:
     name: feltsecure/owasp-bwapp
     source: pull
 
 - name: Tag and push to local registry
-  community.general.docker_image:
+  docker_image:
     name: feltsecure/owasp-bwapp
     repository: localhost:5000/feltsecure/owasp-bwapp
     push: yes

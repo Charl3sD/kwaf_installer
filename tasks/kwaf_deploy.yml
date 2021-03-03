@@ -44,7 +44,7 @@
     - "{{ playbook_dir }}/../kwaf_images/waas/custom-resources/v1beta1/*.yaml"
 
 - name: Log into private registry and force re-authorization
-  community.general.docker_login:
+  docker_login:
     registry_url: localhost:5000
     username: potato
     password: tomato

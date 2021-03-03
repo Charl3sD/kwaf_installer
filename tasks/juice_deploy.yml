@@ -4,7 +4,7 @@
   ignore_errors: yes
 
 - name: Pull juice-shop base image
-  community.general.docker_image:
+  docker_image:
     name: bkimminich/juice-shop
     source: pull
 
@@ -21,7 +21,7 @@
   command: docker commit base-juice-shop moded-juice-shop
 
 - name: Tag and push to local registry
-  community.general.docker_image:
+  docker_image:
     name: moded-juice-shop
     repository: localhost:5000/moded-juice-shop
     push: yes

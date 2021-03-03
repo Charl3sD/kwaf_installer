@@ -1,5 +1,6 @@
 #!/bin/bash
-
+set -e
+ 
 if [ "$EUID" -ne 0 ]
   then echo "Please run as root"
   exit
@@ -50,6 +51,8 @@ echo "Wunderbar ! ... Setting up installer requirements"
 yum -y install epel-release
 yum repolist
 yum -y install python3 dnf git vim
+
+pip3 install --upgrade pip
 
 pip3 install ansible==2.9.16 paramiko
 
