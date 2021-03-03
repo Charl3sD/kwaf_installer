@@ -251,3 +251,14 @@
                   port:
                     number: 80
 
+
+- name: initialise Bwapp's DB
+  uri:
+    url: http://{{NodeIP1}}/bwapp-secure/install.php?install=yes
+    follow_redirects: none
+    method: GET
+  register: _result
+  until: _result.status == 200
+  retries: 30 # 30 * 5 seconds
+  delay: 5 # Every 5 seconds
+

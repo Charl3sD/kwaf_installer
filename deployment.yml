@@ -10,15 +10,15 @@
          tags: [storage]
        - include: tasks/juice_deploy.yml
          tags: [juice]
-#       - include: tasks/bwapp_deploy.yml
-#         tags: [bwapp]
+       - include: tasks/bwapp_deploy.yml
+         tags: [bwapp]
        - include: tasks/kwaf_deploy.yml
          tags: [kwaf]
        - include: tasks/kwaf_patch.yml
          tags: [kwaf_patch]
        - include: tasks/juice_secure_deploy.yml
          tags: [juice_secure]
-#       - include: tasks/bwapp_secure_deploy.yml
-#         tags: [bwapp_secure]
+       - include: tasks/bwapp_secure_deploy.yml
+         tags: [bwapp_secure]
        - include: tasks/print_urls.yml
          tags: [urls]
