@@ -59,6 +59,14 @@
   with_fileglob:
     - "{{ playbook_dir }}/../kwaf_images_{{WaasVersion}}/waas_images/*.tar"
 
+- name: template Helm values for Waas deployment
+  template:
+    src: "{{ playbook_dir }}/files/wass_values.yaml.j2"
+    dest: "{{ playbook_dir }}/files/wass_values.yaml"
+    owner: root
+    group: wheel
+    mode: 0644
+
 - name: Deploy Kwaf
   community.kubernetes.helm:
     name: waas

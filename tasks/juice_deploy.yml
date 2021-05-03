@@ -11,11 +11,11 @@
 - name: Run Juice-shop in docker to patch it
   command: docker run -d --name base-juice-shop bkimminich/juice-shop
 
-- name: Juice-shop patch helmet MIME manipulation
-  command: docker exec -i --user root base-juice-shop sed -i 's/.*helmet\.noSniff.*//' server.js
+##- name: Juice-shop patch helmet MIME manipulation
+##  command: docker exec -i --user root base-juice-shop sed -i 's/.*helmet\.noSniff.*//' server.js
 
-- name: Juice-shop patch helmet framequard
-  command: docker exec -i --user root base-juice-shop sed -i 's/.*helmet\.frameguard.*//' server.js
+##- name: Juice-shop patch helmet framequard
+##  command: docker exec -i --user root base-juice-shop sed -i 's/.*helmet\.frameguard.*//' server.js
 
 - name: Commit changes to moded-juice-shop docker image
   command: docker commit base-juice-shop moded-juice-shop
