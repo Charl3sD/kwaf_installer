@@ -61,8 +61,8 @@
 
 - name: template Helm values for Waas deployment
   template:
-    src: "{{ playbook_dir }}/files/wass_values.yaml.j2"
-    dest: "{{ playbook_dir }}/files/wass_values.yaml"
+    src: "{{ playbook_dir }}/files/waas_values.yaml.j2"
+    dest: "{{ playbook_dir }}/files/waas_values.yaml"
     owner: root
     group: wheel
     mode: 0644

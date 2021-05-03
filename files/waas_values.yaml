@@ -3,7 +3,7 @@
 global:
   image:
     registry: localhost:5000
-    version: {{WaasVersion}}
+    version: :1.4.0
     pullPolicy: IfNotPresent
   useNodePort: false
   nodePortRangeStart: 31000

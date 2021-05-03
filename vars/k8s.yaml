@@ -13,10 +13,10 @@ NodeIP2: 127.0.0.1
 NodeIP3: 127.0.0.1
 
 # The Kwaf install archive filename
-InstallerTgz:  KubernetesWAF-1-5-1.tgz
+InstallerTgz:  KubernetesWAF-1-4-0.tgz
 
 # used to manage docker images, should match the release installed 
-WaasVersion: 1.5.1
+WaasVersion: 1.4.0
 
 # If you have a license, you can install it by modifying tasks/kwaf_patch.yml line 254
 # if your install is already done you can run only that part with:
