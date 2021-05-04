@@ -46,4 +46,11 @@ note that you can run parts of the install using tags defined in the prequisites
 ansible-playbook -i,127.0.0.1 deployment.yml -u root --private-key=~/.ssh/id_rsa --tags kwaf_patch 
 ```
 
+Upgrades are possible using the playbook to this effect.
+Note that you must first edit the vars/k8s.yaml file to reflect the target version and new Kwaf tgz archive
+
+```
+ansible-playbook -i,127.0.0.1 upgrade.yml -u root --private-key=~/.ssh/id_rsa
+```
+
 Enjoy !

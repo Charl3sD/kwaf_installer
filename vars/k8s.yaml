@@ -8,15 +8,15 @@ MultiNodeCluster: false
 
 # this defines the IPs where the cluster should be deployed. Only NodeIP1 will be used if MultiNodeCluster is false
 # to ensure your services will be reachable replace with routable IPs configured on your nodes
-NodeIP1: 172.27.200.120
+NodeIP1: 127.0.0.1
 NodeIP2: 127.0.0.1
 NodeIP3: 127.0.0.1
 
 # The Kwaf install archive filename
-InstallerTgz:  KubernetesWAF-1-4-0.tgz
+InstallerTgz:  KubernetesWAF-1-5-1.tgz
 
 # used to manage docker images, should match the release installed 
-WaasVersion: 1.4.0
+WaasVersion: 1.5.1
 
 # If you have a license, you can install it by modifying tasks/kwaf_patch.yml line 254
 # if your install is already done you can run only that part with:
